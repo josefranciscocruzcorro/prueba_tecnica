@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Banco · Consola</title>
+  <meta name="description" content="Consola de administración de clientes, cuentas y movimientos.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f766e'/><path d='M28 62V38h10v24zm17 0V30h10v32zm17 0V46h10v16z' fill='white'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <!-- El sufijo de versión invalida la copia en caché del navegador en cada despliegue. -->
+  <link rel="stylesheet" href="assets/estilos.css?v=1.0.0">
+</head>
+<body>
+
+  <!-- Pantalla de acceso ------------------------------------------------------------------- -->
+  <main id="pantalla-acceso" class="acceso" hidden>
+    <section class="acceso__panel">
+      <div class="marca marca--grande">
+        <span class="marca__icono" aria-hidden="true"></span>
+        <span class="marca__texto">Banco</span>
+      </div>
+      <h1 class="acceso__titulo">Entrar a la consola</h1>
+      <p class="acceso__subtitulo">Use su identificador de cliente y su contraseña.</p>
+
+      <form id="forma-acceso" class="forma" novalidate>
+        <div class="campo">
+          <label for="acceso-cliente">Identificador de cliente</label>
+          <input id="acceso-cliente" name="clienteId" autocomplete="username" placeholder="CLI-001" required>
+        </div>
+        <div class="campo">
+          <label for="acceso-contrasena">Contraseña</label>
+          <input id="acceso-contrasena" name="contrasena" type="password" autocomplete="current-password"
+                 placeholder="••••" required>
+        </div>
+        <p id="acceso-error" class="mensaje mensaje--error" role="alert" hidden></p>
+        <button class="boton boton--primario boton--ancho" type="submit" data-envio>Entrar</button>
+      </form>
+
+      <div class="acceso__demo">
+        <p class="acceso__demo-titulo">Cuentas de demostración</p>
+        <div class="acceso__demo-lista" id="acceso-demo"></div>
+      </div>
+    </section>
+
+    <aside class="acceso__lateral" aria-hidden="true">
+      <blockquote class="acceso__cita">
+        <p>Dos microservicios independientes, comunicados por eventos.</p>
+        <footer>Clientes &amp; Personas · Cuentas &amp; Movimientos</footer>
+      </blockquote>
+    </aside>
+  </main>
+
+  <!-- Aplicación --------------------------------------------------------------------------- -->
+  <div id="aplicacion" class="disposicion" hidden>
+
+    <aside class="barra-lateral">
+      <div class="marca">
+        <span class="marca__icono" aria-hidden="true"></span>
+        <span class="marca__texto">Banco</span>
+      </div>
+
+      <nav class="navegacion" aria-label="Secciones">
+        <a href="#/resumen"      data-nav="resumen">Resumen</a>
+        <a href="#/clientes"     data-nav="clientes">Clientes</a>
+        <a href="#/cuentas"      data-nav="cuentas">Cuentas</a>
+        <a href="#/movimientos"  data-nav="movimientos">Movimientos</a>
+        <a href="#/reportes"     data-nav="reportes">Reportes</a>
+      </nav>
+
+      <div class="barra-lateral__pie">
+        <a class="enlace-externo" href="http://localhost:5081/swagger" target="_blank" rel="noopener">API Clientes ↗</a>
+        <a class="enlace-externo" href="http://localhost:5082/swagger" target="_blank" rel="noopener">API Cuentas ↗</a>
+      </div>
+    </aside>
+
+    <div class="principal">
+      <header class="cabecera">
+        <div>
+          <h1 id="titulo-vista" class="cabecera__titulo">Resumen</h1>
+          <p id="subtitulo-vista" class="cabecera__subtitulo"></p>
+        </div>
+        <div class="cabecera__acciones">
+          <div class="sesion">
+            <span class="sesion__nombre" id="sesion-nombre"></span>
+            <span class="sesion__id" id="sesion-id"></span>
+          </div>
+          <button class="boton boton--sutil" id="boton-salir" type="button">Salir</button>
+        </div>
+      </header>
+
+      <main id="vista" class="vista" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <!-- Diálogo y avisos --------------------------------------------------------------------- -->
+  <dialog id="dialogo" class="dialogo">
+    <form method="dialog" class="dialogo__cerrar-forma">
+      <button class="dialogo__cerrar" value="cancelar" aria-label="Cerrar">×</button>
+    </form>
+    <h2 id="dialogo-titulo" class="dialogo__titulo"></h2>
+    <div id="dialogo-cuerpo"></div>
+  </dialog>
+
+  <div id="avisos" class="avisos" role="status" aria-live="polite"></div>
+
+  <script type="module" src="assets/app.js?v=1.0.0"></script>
+</body>
+</html>

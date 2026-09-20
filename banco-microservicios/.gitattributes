@@ -1,0 +1,17 @@
+# Normaliza los finales de línea: en el repositorio siempre LF, en el disco lo que use cada
+# sistema. Sin esto, clonar en Windows y en Linux produce diferencias espurias en cada archivo.
+* text=auto eol=lf
+
+# Archivos que deben conservar LF sí o sí: con CRLF, Docker y los intérpretes de shell fallan.
+Dockerfile      text eol=lf
+*.sh            text eol=lf
+*.conf          text eol=lf
+*.sql           text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+
+# Binarios: Git no debe tocarlos.
+*.png binary
+*.jpg binary
+*.ico binary
+*.zip binary

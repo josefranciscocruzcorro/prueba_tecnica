@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/Shared.Api/Shared.Api.csproj" />
+    <Project Path="src/BuildingBlocks/Shared.Contracts/Shared.Contracts.csproj" />
+    <Project Path="src/BuildingBlocks/Shared.Infrastructure/Shared.Infrastructure.csproj" />
+    <Project Path="src/BuildingBlocks/Shared.Kernel/Shared.Kernel.csproj" />
+  </Folder>
+  <Folder Name="/src/Clientes/">
+    <Project Path="src/Clientes/Clientes.Api/Clientes.Api.csproj" />
+    <Project Path="src/Clientes/Clientes.Application/Clientes.Application.csproj" />
+    <Project Path="src/Clientes/Clientes.Domain/Clientes.Domain.csproj" />
+    <Project Path="src/Clientes/Clientes.Infrastructure/Clientes.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Cuentas/">
+    <Project Path="src/Cuentas/Cuentas.Api/Cuentas.Api.csproj" />
+    <Project Path="src/Cuentas/Cuentas.Application/Cuentas.Application.csproj" />
+    <Project Path="src/Cuentas/Cuentas.Domain/Cuentas.Domain.csproj" />
+    <Project Path="src/Cuentas/Cuentas.Infrastructure/Cuentas.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Clientes.UnitTests/Clientes.UnitTests.csproj" />
+    <Project Path="tests/Cuentas.IntegrationTests/Cuentas.IntegrationTests.csproj" />
+    <Project Path="tests/Cuentas.UnitTests/Cuentas.UnitTests.csproj" />
+  </Folder>
+</Solution>

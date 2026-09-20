@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/node_modules/
+**/TestResults/
+docs/
+tests/
+postman/
+*.md
+.git/
+.gitignore

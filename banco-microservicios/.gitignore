@@ -1,0 +1,51 @@
+# ── Compilación de .NET ─────────────────────────────────────────────────────
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userprefs
+artifacts/
+
+# ── Resultados de pruebas y cobertura ───────────────────────────────────────
+TestResults/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.trx
+
+# ── Entornos de desarrollo ──────────────────────────────────────────────────
+.vs/
+.vscode/
+.idea/
+*.swp
+*~
+
+# ── Sistema operativo ───────────────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# ── Secretos y configuración local ──────────────────────────────────────────
+# appsettings.json SÍ se versiona: solo lleva valores de desarrollo.
+# Lo que nunca debe subirse son las sobrescrituras locales y los .env.
+appsettings.Local.json
+appsettings.*.Local.json
+.env
+.env.*
+!.env.example
+*.pfx
+*.key
+
+# ── Dependencias de Node (solo se usa npx para Newman) ──────────────────────
+node_modules/
+npm-debug.log*
+
+# ── Archivos temporales del repositorio ─────────────────────────────────────
+*.log
+tmp/
+
+# ── Paquete de entrega (se regenera con git archive) ────────────────────────
+banco-microservicios-entrega.zip

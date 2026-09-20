@@ -1,0 +1,136 @@
+# Stack completo del ejercicio: dos microservicios, sus bases de datos, el broker de mensajería
+# y la interfaz web tras un proxy inverso.
+#
+#   docker compose up --build
+#
+# Los puertos publicados están desplazados a propósito (5080+, 5442, 5673) para no chocar con
+# servicios que ya estén ocupando los puertos habituales en la máquina del evaluador.
+
+name: banco-microservicios
+
+services:
+
+  # ── Infraestructura ──────────────────────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: banco_postgres
+    environment:
+      POSTGRES_USER: banco
+      POSTGRES_PASSWORD: banco
+      POSTGRES_DB: postgres
+      # Acelera el arranque en desarrollo; en producción se usaría la configuración por defecto.
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    ports:
+      - "5442:5432"
+    volumes:
+      - datos-postgres:/var/lib/postgresql/data
+      # Cada microservicio tiene su propia base: no comparten esquema ni pueden leerse entre sí.
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banco -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+    networks: [banco]
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: banco_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: banco
+      RABBITMQ_DEFAULT_PASS: banco
+    ports:
+      - "5673:5672"
+      - "15673:15672"   # Consola de administración: http://localhost:15673 (banco / banco)
+    volumes:
+      - datos-rabbitmq:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+    networks: [banco]
+
+  # ── Microservicios ───────────────────────────────────────────────────────────────────────────
+
+  clientes-api:
+    build:
+      context: .
+      dockerfile: src/Clientes/Clientes.Api/Dockerfile
+    image: banco/clientes-api:1.0.0
+    container_name: banco_clientes_api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__ClientesDb: "Host=postgres;Port=5432;Database=clientes_db;Username=banco;Password=banco;Maximum Pool Size=50"
+      Bus__Host: rabbitmq
+      Bus__Usuario: banco
+      Bus__Contrasena: banco
+      # Ambos servicios comparten la clave para que un mismo token valga en los dos.
+      Jwt__Clave: ${JWT_CLAVE:-clave-compartida-de-demostracion-cambiar-en-produccion}
+      Jwt__Emisor: banco.clientes
+      Jwt__Audiencia: banco.api
+      Cors__Origenes__0: http://localhost:5080
+    ports:
+      - "5081:8080"
+    restart: unless-stopped
+    networks: [banco]
+
+  cuentas-api:
+    build:
+      context: .
+      dockerfile: src/Cuentas/Cuentas.Api/Dockerfile
+    image: banco/cuentas-api:1.0.0
+    container_name: banco_cuentas_api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__CuentasDb: "Host=postgres;Port=5432;Database=cuentas_db;Username=banco;Password=banco;Maximum Pool Size=50"
+      Bus__Host: rabbitmq
+      Bus__Usuario: banco
+      Bus__Contrasena: banco
+      Jwt__Clave: ${JWT_CLAVE:-clave-compartida-de-demostracion-cambiar-en-produccion}
+      Jwt__Emisor: banco.clientes
+      Jwt__Audiencia: banco.api
+      Cors__Origenes__0: http://localhost:5080
+    ports:
+      - "5082:8080"
+    restart: unless-stopped
+    networks: [banco]
+
+  # ── Interfaz ─────────────────────────────────────────────────────────────────────────────────
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: banco/web:1.0.0
+    container_name: banco_web
+    depends_on:
+      clientes-api:
+        condition: service_healthy
+      cuentas-api:
+        condition: service_healthy
+    ports:
+      - "5080:80"
+    restart: unless-stopped
+    networks: [banco]
+
+networks:
+  banco:
+    driver: bridge
+
+volumes:
+  datos-postgres:
+  datos-rabbitmq:
